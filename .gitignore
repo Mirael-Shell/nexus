@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Type checking
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker/data/
+
+# ML artifacts
+models/artifacts/
+models/checkpoints/
+*.pt
+*.pth
+*.onnx
+*.mlpackage
+
+# Runtime reports (verify/load-test/demo outputs)
+reports/*
+!reports/.gitkeep
+
+# Node (frontend)
+node_modules/
+frontend/dist/
+frontend/build/
+
+# DVC
+/dvc-storage/

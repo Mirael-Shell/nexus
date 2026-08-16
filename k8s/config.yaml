@@ -1,0 +1,21 @@
+# ─── Secrets ─────────────────────────────────────────────
+# Replace with real values or use: kubectl create secret generic nexus-db-secret ...
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nexus-db-secret
+  namespace: nexus
+type: Opaque
+stringData:
+  database-url: "postgresql+asyncpg://nexus:nexus_dev@nexus-postgres:5432/nexus"
+
+---
+# ─── ConfigMap for shared config ─────────────────────────
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexus-config
+  namespace: nexus
+data:
+  MLFLOW_TRACKING_URI: "http://nexus-mlflow:5000"
+  MLFLOW_S3_ENDPOINT_URL: "http://nexus-minio:9000"
