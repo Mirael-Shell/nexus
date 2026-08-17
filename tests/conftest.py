@@ -1,16 +1,19 @@
 """Shared test fixtures for NEXUS test suite.
 
-Uses in-memory SQLite with StaticPool for test isolation.
-Tables are created per-test inside the client fixture so they share
-the test's event loop (required by pytest-asyncio >= 1.0, where
-session-scoped async fixtures run on a separate loop and their
-aiosqlite connections cannot be reused from test loops).
+Uses a file-backed SQLite database in a temp directory for test isolation.
+A file-backed DB (unlike :memory:) survives connection pool recycling and
+event-loop switches under pytest-asyncio >= 1.0 (new loop per test), so
+tables created at fixture setup remain visible to every test.
+Each test session gets its own file, removed afterwards.
 """
 
 import os
 
-# Force in-memory SQLite BEFORE any nexus imports
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
+# Force file-backed SQLite in a temp dir BEFORE any nexus imports
+import tempfile
+
+_TEST_DB = os.path.join(tempfile.mkdtemp(prefix="nexus_test_"), "test.db")
+os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_TEST_DB}"
 os.environ["API_DEBUG"] = "false"
 
 import pytest
@@ -23,9 +26,11 @@ from nexus.main import create_app
 
 @pytest.fixture
 async def client():
-    """ASGI test client with in-memory database (tables on the test's loop)."""
-    # Idempotent (checkfirst=True by default) — guarantees tables exist
-    # on this test's event loop regardless of fixture ordering.
+    """ASGI test client with isolated file-backed SQLite database.
+
+    create_all is idempotent (checkfirst=True), guaranteeing tables exist
+    regardless of fixture ordering or connection recycling.
+    """
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -33,3 +38,7 @@ async def client():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c
+
+    # Drop data between tests for isolation (file stays, tables persist)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)

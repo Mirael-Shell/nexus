@@ -1,17 +1,5 @@
 """Tests for Phase 6 features: alerting, business, guardrails, active learning."""
 
-import pytest
-from httpx import ASGITransport, AsyncClient
-
-from nexus.main import create_app
-
-
-@pytest.fixture
-async def client():
-    app = create_app()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
-        yield c
-
 
 # ─── Alerting ────────────────────────────────────────────
 

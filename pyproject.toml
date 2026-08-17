@@ -68,6 +68,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # ML code uses uppercase X for feature matrices and lowercase l for labels
 "src/nexus/training/pipeline.py" = ["N803", "N806", "E741"]
+# conftest sets env vars BEFORE imports (in-memory DB must be set first)
+"tests/conftest.py" = ["E402"]
 
 [tool.ruff.format]
 quote-style = "double"
