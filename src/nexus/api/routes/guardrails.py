@@ -10,6 +10,7 @@ Each layer contributes signals; final decision is a weighted combination.
 
 from __future__ import annotations
 
+import asyncio
 import re
 import time
 
@@ -145,7 +146,7 @@ async def analyze_with_guardrails(req: GuardrailRequest) -> GuardrailResponse:
 
     # ─── Layer 3: ML Classifier ───
     engine = get_engine()
-    result = engine.predict(text)
+    result = await asyncio.to_thread(engine.predict, text)
     ml_score = result.confidence if result.label in ("spam", "toxic") else 0.0
     layers.append(
         LayerResult(

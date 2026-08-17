@@ -1,5 +1,6 @@
 """Prediction endpoints: POST /predict, GET /predict/{id}."""
 
+import asyncio
 import json
 import uuid
 from datetime import UTC, datetime
@@ -35,7 +36,7 @@ async def predict(
     (graceful degradation mode).
     """
     engine = get_engine()
-    result = engine.predict(request.text)
+    result = await asyncio.to_thread(engine.predict, request.text)
 
     # Feed the alerting system (toxicity spike / latency detection)
     record_prediction(result.label, result.confidence, result.processing_time_ms)

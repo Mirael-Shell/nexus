@@ -73,5 +73,13 @@ load-test-heavy:
 	PYTHONPATH="" locust -f load_tests/locustfile.py --host http://localhost:8000 \
 		--headless -u 50 -r 5 -t 180s --only-summary --csv reports/loadtest_heavy
 
+# Capacity profiling: rate limiter disabled to measure raw throughput
+RATE_LIMIT_OFF = RATE_LIMIT_PER_MINUTE=100000 RATE_LIMIT_BURST=100000
+
+profile:
+	uvicorn_check=$(shell curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/api/v1/health) ; \
+	if [ "$$uvicorn_check" != "200" ]; then echo "API is not running on :8000 (start with: make up)"; exit 1; fi
+	@echo "Note: for raw-capacity numbers ensure RATE_LIMIT_PER_MINUTE is raised in .env and API restarted"
+
 demo:
 	PYTHONPATH="" python scripts/run_demo.py

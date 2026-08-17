@@ -246,6 +246,18 @@ CLI-вариант: `make demo`
 ### Load Testing (`make load-test`)
 Locust-сценарии с weighted-профилем трафика (predict / filter / guardrails / stats). Smoke: 10 users / 60s, heavy: 50 users / 180s. CSV-отчёты в `reports/`.
 
+### Performance: async offload инференса
+CPU-bound инференс (TF-IDF + LogReg, sentence-transformers эмбеддинги) изначально вызывался синхронно в async-роутах и блокировал event loop — под нагрузкой латентность сериализовалась (p95 до 13s @ 20 users). Все вызовы `engine.predict()` / `embed()` переведены на `asyncio.to_thread` (5 роутов), event loop освобождён для конкурентных запросов.
+
+| Метрика (Locust, 20 users / 30s, M1 Pro) | До | После |
+|---|---|---|
+| p50 | 1.30s | 1.50s |
+| **p95** | **13.0s** | **2.90s** |
+| Throughput | 5.7 RPS | 9.1 RPS |
+| Ошибки | 0 | 0 |
+
+Для замера сырой ёмкости лимитер отключается: `RATE_LIMIT_PER_MINUTE=100000 docker compose up -d --force-recreate --no-deps api` (по умолчанию 300 RPM режет load-профиль на 429-х).
+
 ---
 
 ## 📈 Для портфолио

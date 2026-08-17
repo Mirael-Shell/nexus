@@ -89,6 +89,8 @@ services:
       MLFLOW_TRACKING_URI: http://mlflow:5000
       HF_HUB_OFFLINE: "1"
       TRANSFORMERS_OFFLINE: "1"
+      RATE_LIMIT_PER_MINUTE: "${RATE_LIMIT_PER_MINUTE:-300}"
+      RATE_LIMIT_BURST: "${RATE_LIMIT_BURST:-50}"
       API_HOST: "0.0.0.0"
       API_PORT: "8000"
       API_DEBUG: "false"

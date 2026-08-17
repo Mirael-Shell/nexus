@@ -16,6 +16,7 @@ Unlike /predict, this endpoint:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import uuid
 
@@ -110,10 +111,10 @@ async def filter_content(
 
     # 1. Classify
     engine = get_engine()
-    result = engine.predict(request.text)
+    result = await asyncio.to_thread(engine.predict, request.text)
 
-    # 2. Compute embedding
-    embedding = embed(request.text)
+    # 2. Compute embedding (CPU-bound: sentence-transformers) — offload the loop
+    embedding = await asyncio.to_thread(embed, request.text)
     embed_model = "all-MiniLM-L6-v2" if is_model_loaded() else "hash-fallback"
 
     # 3. Apply rules

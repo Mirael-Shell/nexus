@@ -86,7 +86,7 @@ async def run_simulator(interval_seconds: float = 2.0) -> None:
 
     while simulator_running:
         text, expected = random.choice(SIMULATOR_MESSAGES)
-        result = engine.predict(text)
+        result = await asyncio.to_thread(engine.predict, text)
 
         event = {
             "type": "moderation",
@@ -123,7 +123,7 @@ async def stream_endpoint(ws: WebSocket) -> None:
             if msg.get("type") == "moderate":
                 text = msg.get("text", "")
                 engine = get_engine()
-                result = engine.predict(text)
+                result = await asyncio.to_thread(engine.predict, text)
                 await ws.send_text(
                     json.dumps(
                         {
