@@ -1,11 +1,11 @@
 {
-  "accuracy": 0.9697,
-  "f1_macro": 0.9726,
-  "f1_weighted": 0.9699,
-  "train_samples": 131,
-  "test_samples": 33,
-  "train_time_sec": 0.02,
-  "model_version": "tfidf-logreg-1786999196",
+  "accuracy": 0.9939,
+  "f1_macro": 0.9939,
+  "f1_weighted": 0.9939,
+  "train_samples": 1964,
+  "test_samples": 491,
+  "train_time_sec": 0.03,
+  "model_version": "tfidf-logreg-1787027197",
   "classes": [
     "safe",
     "spam",
@@ -13,19 +13,19 @@
   ],
   "per_class": {
     "safe": {
-      "precision": 1.0,
-      "recall": 0.9333,
-      "f1": 0.9655
+      "precision": 0.9893,
+      "recall": 0.9946,
+      "f1": 0.992
     },
     "spam": {
-      "precision": 0.9091,
-      "recall": 1.0,
-      "f1": 0.9524
+      "precision": 1.0,
+      "recall": 0.9939,
+      "f1": 0.997
     },
     "toxic": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0
+      "precision": 0.9929,
+      "recall": 0.9929,
+      "f1": 0.9929
     }
   }
 }
